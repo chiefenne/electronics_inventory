@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import os
+import re
 import secrets
 import time
 from datetime import datetime, timedelta, timezone
 import uuid
+from pathlib import Path
 
 import csv
 import io
@@ -46,6 +48,19 @@ ALLOWED_EDIT_FIELDS = {
     "datasheet_url",
     "pinout_url",
 }
+
+
+def _available_label_presets() -> List[str]:
+    static_dir = Path(__file__).with_name("static")
+    presets: List[str] = []
+    for css_file in static_dir.glob("avery_*.css"):
+        name = css_file.stem
+        if not name.startswith("avery_"):
+            continue
+        preset = name[len("avery_"):]
+        if preset and re.fullmatch(r"[A-Za-z0-9_-]+", preset):
+            presets.append(preset)
+    return sorted(set(presets))
 
 
 def _auth_config() -> tuple[str, str]:
@@ -611,13 +626,14 @@ def export_csv(q: str = "", category: str = "", container_id: str = "") -> Strea
 @app.get("/containers/labels", response_class=HTMLResponse)
 def container_labels(request: Request) -> HTMLResponse:
     containers = list_containers_in_use()
+    presets = _available_label_presets() or ["3348", "3425", "3666"]
 
     return render(
         "labels_select.html",
         request=request,
         title=f"{APP_TITLE}",
         containers=containers,
-        presets=["3348", "3425", "3666"],
+        presets=presets,
         modes=[
             ("asset", "Asset (QR)"),
             ("content", "Content (text)"),
@@ -633,6 +649,9 @@ async def print_labels(
     mode: str = Form("asset"),
     code: list[str] = Form([]),
 ) -> HTMLResponse:
+
+    if preset not in _available_label_presets():
+        raise HTTPException(status_code=400, detail="Invalid label preset")
 
     if not code:
         return HTMLResponse("No containers selected", status_code=400)

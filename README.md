@@ -87,7 +87,7 @@ Label printing is implemented as:
 To add a new layout later:
 
 1) Create `static/avery_<new-id>.css`
-2) Add the new id to the `presets=[...]` list in `container_labels()` in `app.py`
+2) Reload the Labels page — the preset list is discovered automatically from `static/avery_*.css`
 
 ### Print calibration (offset + spacing)
 
