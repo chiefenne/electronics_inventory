@@ -77,6 +77,32 @@ Container label QR codes are generated using `BASE_URL` in `app.py`.
 
 - If you run this on a different host/port, update `BASE_URL` so the QR codes point to a reachable URL (e.g. your LAN IP).
 
+## Label printing layouts
+
+Label printing is implemented as:
+
+- Shared label UI/print styles: `static/labels.css`
+- One layout file per Avery preset: `static/avery_<preset>.css` (e.g. `static/avery_3425.css`)
+
+To add a new layout later:
+
+1) Create `static/avery_<new-id>.css`
+2) Add the new id to the `presets=[...]` list in `container_labels()` in `app.py`
+
+### Print calibration (offset + spacing)
+
+Printers often introduce small feed/margin offsets even with “Margins: none”. Each preset CSS supports knobs:
+
+- `--label_offset_x` / `--label_offset_y` (shift the whole sheet; negative moves left/up)
+- `--label_gap_x` / `--label_gap_y` (space between labels)
+
+Example (move 5mm left and 1mm up):
+
+```css
+--label_offset_x: -5mm;
+--label_offset_y: -1mm;
+```
+
 ## Authentication
 
 This app uses a **login page + server-side sessions** (stored in SQLite) for all routes.
