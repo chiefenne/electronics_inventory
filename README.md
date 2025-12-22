@@ -1,12 +1,13 @@
 # Electronics Inventory
 
-A lightweight web app to track electronics parts (category, subcategory, description, package, container, quantity, notes) with a simple HTML UI.
+A lightweight web app to track electronics parts (category, subcategory, description, package, container, quantity, notes) with a simple HTML UI — including optional links to datasheets and pinouts.
 
 ## Features
 
 - Add, inline-edit, and delete parts
 - Search + filter by category and container
 - CSV export
+- Optional links per part: datasheet + pinout (quick-open buttons in the table)
 - Container pages and printable container labels with QR codes
 - Uses a local SQLite database file (no server required)
 
