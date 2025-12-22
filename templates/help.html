@@ -128,6 +128,25 @@
 </section>
 
 <section class="panel help">
+    <h3>Delete & Restore (Trash)</h3>
+    <p>
+        When you delete a part, it is not immediately destroyed. It is moved into a <b>trash</b> table so you can undo
+        mistakes.
+    </p>
+    <ul>
+        <li><b>Delete:</b> removes the part from the main table and moves it to trash.</li>
+        <li><b>Restore page:</b> open <span class="mono">/restore</span> (also available via the navigation).</li>
+        <li><b>Restore selected:</b> tick the checkboxes and restore only those rows.</li>
+        <li><b>Restore by current filter:</b> use the search/category/container filters, then restore everything that
+            matches.</li>
+    </ul>
+    <p class="muted">
+        Note: the trash is stored in the same <span class="mono">inventory.db</span> file. Backing up that file backs up
+        both the inventory and the trash.
+    </p>
+</section>
+
+<section class="panel help">
     <h3>Label Strategy</h3>
     <p>Physically label containers with their container code:</p>
     <pre class="mono">BX-03</pre>
