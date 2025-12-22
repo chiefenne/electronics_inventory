@@ -73,6 +73,10 @@
     white-space: nowrap;
 }
 
+.labels-select .outline-toggle .muted {
+    font-size: 12px;
+}
+
 .label-row .labeltext {
     flex: 0 1 360px;
     width: 360px;
