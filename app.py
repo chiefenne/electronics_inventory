@@ -59,7 +59,6 @@ ALLOWED_EDIT_FIELDS = {
     "image_url",
     "datasheet_url",
     "pinout_url",
-    "pinout_image_url",
 }
 
 
@@ -513,7 +512,7 @@ def save_cell(part_uuid: str, field: str, value: str = Form("")) -> HTMLResponse
         ensure_category(value)
     elif field == "subcategory":
         ensure_subcategory(value)
-    elif field in ("datasheet_url", "pinout_url", "image_url", "pinout_image_url"):
+    elif field in ("datasheet_url", "pinout_url", "image_url"):
         value = value.strip()
 
 
@@ -658,7 +657,6 @@ def export_csv(q: str = "", category: str = "", container_id: str = "") -> Strea
         "image_url",
         "datasheet_url",
         "pinout_url",
-        "pinout_image_url",
         "updated_at",
         "uuid",
     ]

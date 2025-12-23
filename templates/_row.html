@@ -1,10 +1,4 @@
 <tr id="row-{{ part.uuid }}">
-    <td class="cell" hx-get="/parts/{{ part.uuid }}/edit/category" hx-target="#row-{{ part.uuid }}" hx-swap="outerHTML">{{
-        part.category }}</td>
-
-    <td class="cell" hx-get="/parts/{{ part.uuid }}/edit/subcategory" hx-target="#row-{{ part.uuid }}" hx-swap="outerHTML">
-        {{ part.subcategory }}</td>
-
     <td class="cell" hx-get="/parts/{{ part.uuid }}/edit/description" hx-target="#row-{{ part.uuid }}" hx-swap="outerHTML">
         {{ part.description }}</td>
 
@@ -24,6 +18,12 @@
 
     <td class="cell" hx-get="/parts/{{ part.uuid }}/edit/notes" hx-target="#row-{{ part.uuid }}" hx-swap="outerHTML">{{
         part.notes }}</td>
+
+    <td class="cell" hx-get="/parts/{{ part.uuid }}/edit/category" hx-target="#row-{{ part.uuid }}" hx-swap="outerHTML">{{
+        part.category }}</td>
+
+    <td class="cell" hx-get="/parts/{{ part.uuid }}/edit/subcategory" hx-target="#row-{{ part.uuid }}" hx-swap="outerHTML">
+        {{ part.subcategory }}</td>
 
     <td class="mono muted">{{ part.updated_at }}</td>
 
@@ -102,39 +102,6 @@
         {% else %}
         <button class="btn secondary icon" type="button" hx-get="/parts/{{ part.uuid }}/edit/pinout_url" hx-target="#row-{{ part.uuid }}"
             hx-swap="outerHTML" title="Add pinout link">🔌</button>
-        {% endif %}
-
-        {# Pinout image (direct) #}
-        {% set pinout_image_url = part.get("pinout_image_url", "") %}
-        {% if pinout_image_url and pinout_image_url|trim %}
-        {% set pinout_image_url_l = pinout_image_url|lower %}
-        {% if pinout_image_url_l.endswith('.png')
-              or pinout_image_url_l.endswith('.jpg')
-              or pinout_image_url_l.endswith('.jpeg')
-              or pinout_image_url_l.endswith('.gif')
-              or pinout_image_url_l.endswith('.webp')
-              or pinout_image_url_l.endswith('.svg') %}
-        <span class="hover-preview">
-            <button class="btn secondary icon" type="button" hx-get="/parts/{{ part.uuid }}/edit/pinout_image_url" hx-target="#row-{{ part.uuid }}"
-                hx-swap="outerHTML" title="Edit pinout image">🧷</button>
-            <span class="hover-preview__bubble" role="tooltip">
-                <a href="{{ pinout_image_url }}" target="_blank" rel="noopener" title="Open pinout image">
-                    <img class="hover-preview__img" src="{{ pinout_image_url }}" alt="Pinout image preview" loading="lazy" />
-                </a>
-            </span>
-        </span>
-        {% else %}
-        <span class="hover-preview">
-            <button class="btn secondary icon" type="button" hx-get="/parts/{{ part.uuid }}/edit/pinout_image_url" hx-target="#row-{{ part.uuid }}"
-                hx-swap="outerHTML" title="Edit pinout image">🧷</button>
-            <span class="hover-preview__bubble" role="tooltip">
-                <a class="btn secondary" href="{{ pinout_image_url }}" target="_blank" rel="noopener" title="Open pinout image">Open</a>
-            </span>
-        </span>
-        {% endif %}
-        {% else %}
-        <button class="btn secondary icon" type="button" hx-get="/parts/{{ part.uuid }}/edit/pinout_image_url" hx-target="#row-{{ part.uuid }}"
-            hx-swap="outerHTML" title="Add pinout image">🧷</button>
         {% endif %}
 
         <form hx-post="/parts/{{ part.uuid }}/delete" hx-target="#table" hx-swap="innerHTML"

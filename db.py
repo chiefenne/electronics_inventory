@@ -142,6 +142,29 @@ def init_db() -> None:
                 (str(uuid.uuid4()), part_id),
             )
 
+        # Backfill pinout_url from the deprecated pinout_image_url if needed
+        if _has_column("parts", "pinout_image_url") and _has_column("parts", "pinout_url"):
+            conn.execute(
+                """
+                UPDATE parts
+                SET pinout_url = pinout_image_url
+                WHERE (pinout_url IS NULL OR TRIM(pinout_url) = '')
+                  AND pinout_image_url IS NOT NULL
+                  AND TRIM(pinout_image_url) <> ''
+                """
+            )
+
+        if _has_column("parts_trash", "pinout_image_url") and _has_column("parts_trash", "pinout_url"):
+            conn.execute(
+                """
+                UPDATE parts_trash
+                SET pinout_url = pinout_image_url
+                WHERE (pinout_url IS NULL OR TRIM(pinout_url) = '')
+                  AND pinout_image_url IS NOT NULL
+                  AND TRIM(pinout_image_url) <> ''
+                """
+            )
+
         # Ensure the unique index exists after backfill
         conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_parts_uuid ON parts(uuid);")
 
