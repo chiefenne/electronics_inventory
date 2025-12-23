@@ -106,6 +106,8 @@ Label printing is implemented as:
 - Shared label UI/print styles: `static/labels.css`
 - One layout file per Avery preset: `static/avery_<preset>.css` (e.g. `static/avery_3425.css`)
 
+**Trademark notice:** Avery® is a registered trademark of its respective owner (commonly Avery Products Corporation and/or affiliated entities). This project is not affiliated with, sponsored, or endorsed by Avery. The Avery name and label numbers are used only to indicate intended compatibility with commonly available label sheets.
+
 To add a new layout later:
 
 1) Create `static/avery_<new-id>.css`
