@@ -632,7 +632,7 @@ def export_csv(q: str = "", category: str = "", container_id: str = "") -> Strea
     buf = io.StringIO()
     writer = csv.DictWriter(
         buf,
-        fieldnames=["id", "category", "subcategory", "description", "package", "container_id", "quantity", "notes", "updated_at"],
+        fieldnames=["uuid", "category", "subcategory", "description", "package", "container_id", "quantity", "notes", "updated_at"],
         extrasaction="ignore",
     )
     writer.writeheader()
