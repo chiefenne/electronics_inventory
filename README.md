@@ -105,7 +105,8 @@ On startup, the app creates/uses a SQLite database at `inventory.db` (in the rep
 Each part can store optional image URLs:
 
 - `image_url` – photo of the IC/module/device
-- `pinout_image_url` – a direct pinout image (handy when searching pinouts is time-consuming)
+
+Pinouts are stored in `pinout_url`. If `pinout_url` points directly to an image, the table shows a hover preview.
 
 ### Recommended: store images in `static/`
 
@@ -113,7 +114,7 @@ Store images under the repo's `static/` folder (for example `static/images/` and
 Then reference them with a URL starting with `/static/...`:
 
 - `image_url`: `/static/images/MP2307_HW133ABC_board.jpg`
-- `pinout_image_url`: `/static/pinouts/MP2307_pinout.jpg`
+- `pinout_url`: `/static/pinouts/MP2307_pinout.jpg`
 
 ### Hover preview behavior
 
