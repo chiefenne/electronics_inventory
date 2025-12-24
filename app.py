@@ -12,6 +12,7 @@ from pathlib import Path
 import csv
 import io
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse
 
 import qrcode
 from io import BytesIO
@@ -473,8 +474,24 @@ def add_part(
 def delete_part(request: Request, part_uuid: str) -> HTMLResponse:
     deleted_by = getattr(request.state, "user", "") or ""
     _trash_parts("uuid = ?", [part_uuid], deleted_by=deleted_by)
-    parts = fetch_parts()
-    return render("_table.html", parts=parts)
+
+    # HTMX main-table delete expects the table fragment back.
+    if request.headers.get("hx-request", "").lower() == "true":
+        parts = fetch_parts()
+        return render("_table.html", parts=parts)
+
+    # Non-HTMX (e.g., container view): redirect back to where the user came from.
+    referer = request.headers.get("referer", "")
+    dest = "/"
+    try:
+        ref = urlparse(referer)
+        base = urlparse(str(request.base_url))
+        if ref.scheme == base.scheme and ref.netloc == base.netloc and ref.path:
+            dest = ref.path + (("?" + ref.query) if ref.query else "")
+    except Exception:
+        dest = "/"
+
+    return RedirectResponse(url=dest, status_code=303)
 
 @app.get("/parts/{part_uuid}/edit/{field}", response_class=HTMLResponse)
 def edit_cell(part_uuid: str, field: str) -> HTMLResponse:
