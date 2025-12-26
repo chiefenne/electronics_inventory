@@ -121,6 +121,8 @@ Then reference them with a URL starting with `/static/...`:
 - `image_url`: `/static/images/MP2307_HW133ABC_board.jpg`
 - `pinout_url`: `/static/pinouts/MP2307_pinout.jpg`
 
+Note: `static/images/` and `static/pinouts/` are present in the repo (via `.gitkeep`), but the actual image files are intentionally ignored by git.
+
 ### Hover preview behavior
 
 If the URL ends with an image extension (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`), the table shows a hover preview.

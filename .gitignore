@@ -22,8 +22,11 @@ inventory.db
 codebase.zip
 
 # User-managed assets (often large / personal)
-static/images/
-static/pinouts/
+# Keep the folders in git (via .gitkeep), but ignore user content.
+static/images/*
+!static/images/.gitkeep
+static/pinouts/*
+!static/pinouts/.gitkeep
 
 # Editor settings
 .vscode/
