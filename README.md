@@ -30,7 +30,7 @@ The Qty chip can be color-coded using optional stock levels:
 
 ## Screenshots
 
-![Main inventory screen](docs/screenshots/Main_screen.png?v=1)
+![Main inventory screen](docs/screenshots/Main_screen.jpg)
 
 More screenshots:
 
