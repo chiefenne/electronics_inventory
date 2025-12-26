@@ -21,5 +21,9 @@ inventory.db
 # Local archives
 codebase.zip
 
+# User-managed assets (often large / personal)
+static/images/
+static/pinouts/
+
 # Editor settings
 .vscode/
