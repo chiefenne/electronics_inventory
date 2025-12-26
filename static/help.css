@@ -87,3 +87,21 @@
 .panel.help li {
     margin: 4px 0;
 }
+
+/* Inline icons used in help text (match action icon sizing) */
+.panel.help .help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    vertical-align: text-bottom;
+    margin-right: 6px;
+}
+
+.panel.help .help-icon img,
+.panel.help .help-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
