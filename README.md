@@ -124,6 +124,8 @@ Then reference them with a URL starting with `/static/...`:
 If the URL ends with an image extension (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`), the table shows a hover preview.
 Clicking the preview opens the image in a new tab.
 
+On touch devices (mobile/tablet), previews are shown by tapping the icon (instead of hovering). Use the × button to close the preview.
+
 ## QR label URLs (important)
 
 Container label QR codes are generated using `BASE_URL` in `app.py`.
