@@ -16,7 +16,7 @@
         <select name="container_id">
             <option value="">All containers</option>
             {% for c in containers %}
-            <option value="{{ c }}">{{ c }}</option>
+            <option value="{{ c }}" {% if c==container_id %}selected{% endif %}>{{ c }}</option>
             {% endfor %}
         </select>
 
@@ -81,7 +81,7 @@
 
     <datalist id="dl-containers">
         {% for c in containers %}
-        <option value="{{ c.code }}"></option>
+        <option value="{{ c }}"></option>
         {% endfor %}
     </datalist>
 

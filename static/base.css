@@ -431,6 +431,15 @@ select:focus {
     transform: translateY(-1px);
 }
 
+/* Chips that are also links (e.g., open container page) */
+.chip-link {
+    text-decoration: none;
+}
+
+.chip-link:hover {
+    filter: brightness(1.05);
+}
+
 
 .cell:hover {
     background: #fafafa;

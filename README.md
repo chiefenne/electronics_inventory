@@ -10,7 +10,8 @@ A lightweight web app to track electronics parts (category, subcategory, descrip
 ## Features
 
 - Add, inline-edit, and delete parts
-- Search + filter by category and container
+- Search + filter by category and container (free-text search also matches container codes like `BX-50`)
+- Click a container chip in the table to open the container page
 - CSV export
 - Optional links per part: datasheet + pinout (quick-open buttons in the table)
 - Optional images per part: device photo + pinout image (hover preview in the table)
@@ -24,7 +25,7 @@ A lightweight web app to track electronics parts (category, subcategory, descrip
 More screenshots:
 
 - [Main screen (board popup)](docs/screenshots/Main_screen_board_popup.jpg)
-- [Main screen (container pulldown)] docs/screenshots/Main_screen_pulldown_container.png)
+- [Main screen (container pulldown)](docs/screenshots/Main_screen_pulldown_container.png)
 - [Label selection](docs/screenshots/Print_label_selection.png)
 - [Printable labels](docs/screenshots/Print_labels.png)
 - [Restore parts (trash)](docs/screenshots/Restore_parts.png)

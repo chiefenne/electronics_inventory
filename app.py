@@ -264,9 +264,9 @@ def fetch_parts(
     params: List[Any] = []
 
     if q.strip():
-        sql += " AND (description LIKE ? OR notes LIKE ? OR subcategory LIKE ? OR package LIKE ?)"
+        sql += " AND (description LIKE ? OR notes LIKE ? OR subcategory LIKE ? OR package LIKE ? OR container_id LIKE ?)"
         pat = f"%{q.strip()}%"
-        params += [pat, pat, pat, pat]
+        params += [pat, pat, pat, pat, pat]
 
     if category.strip():
         sql += " AND category = ?"
@@ -294,9 +294,9 @@ def fetch_trash(
     params: List[Any] = []
 
     if q.strip():
-        sql += " AND (description LIKE ? OR notes LIKE ? OR subcategory LIKE ? OR package LIKE ?)"
+        sql += " AND (description LIKE ? OR notes LIKE ? OR subcategory LIKE ? OR package LIKE ? OR container_id LIKE ?)"
         pat = f"%{q.strip()}%"
-        params += [pat, pat, pat, pat]
+        params += [pat, pat, pat, pat, pat]
 
     if category.strip():
         sql += " AND category = ?"
