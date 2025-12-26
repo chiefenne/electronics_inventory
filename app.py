@@ -63,6 +63,35 @@ ALLOWED_EDIT_FIELDS = {
 }
 
 
+def _parse_stock_levels(text: str) -> tuple[int | None, int | None]:
+    """Parse stock levels input.
+
+    Supported:
+    - "" (empty) -> disable thresholds (NULL, NULL)
+    - "5" -> (5, 5) (green when >=5, red when <5)
+    - "10:5" -> (10, 5) (green >=10, yellow >=5 and <10, red <5)
+    """
+    raw = (text or "").strip()
+    if raw == "":
+        return None, None
+
+    if ":" not in raw:
+        v = int(raw)
+        v = max(v, 0)
+        return v, v
+
+    left, right = [p.strip() for p in raw.split(":", 1)]
+    if left == "" or right == "":
+        raise ValueError("Use the format hi:lo (e.g. 10:5)")
+
+    hi = max(int(left), 0)
+    lo = max(int(right), 0)
+    if hi < lo:
+        raise ValueError("Expected hi >= lo (e.g. 10:5)")
+
+    return hi, lo
+
+
 def _available_label_presets() -> List[str]:
     static_dir = Path(__file__).with_name("static")
     presets: List[str] = []
@@ -325,12 +354,12 @@ def _trash_parts(where_sql: str, params: List[Any], deleted_by: str) -> str:
             f"""
             INSERT INTO parts_trash(
                 uuid, original_id, batch_id, deleted_at, deleted_by,
-                category, subcategory, description, package, container_id, quantity, notes,
+                category, subcategory, description, package, container_id, quantity, stock_ok_min, stock_warn_min, notes,
                 image_url, datasheet_url, pinout_url, pinout_image_url, created_at, updated_at
             )
             SELECT
                 uuid, id, ?, ?, ?,
-                category, subcategory, description, package, container_id, quantity, notes,
+                category, subcategory, description, package, container_id, quantity, stock_ok_min, stock_warn_min, notes,
                 image_url, datasheet_url, pinout_url, pinout_image_url, created_at, updated_at
             FROM parts
             WHERE {where_sql}
@@ -541,18 +570,35 @@ def edit_cell(part_uuid: str, field: str) -> HTMLResponse:
 
 
 @app.post("/parts/{part_uuid}/edit/{field}", response_class=HTMLResponse)
-def save_cell(part_uuid: str, field: str, value: str = Form("")) -> HTMLResponse:
+def save_cell(
+    part_uuid: str,
+    field: str,
+    value: str = Form(""),
+    stock_levels: str = Form(""),
+) -> HTMLResponse:
     if field not in ALLOWED_EDIT_FIELDS:
         return HTMLResponse("Invalid field", status_code=400)
 
     # Basic normalization
     value = value.strip()
+
+    q_int = 0
+    ok_min: int | None = None
+    warn_min: int | None = None
+    keep_levels = False
+
     if field == "quantity":
         try:
             q = int(value) if value != "" else 0
         except ValueError:
             q = 0
-        value = str(max(q, 0))
+
+        q_int = max(q, 0)
+
+        try:
+            ok_min, warn_min = _parse_stock_levels(stock_levels)
+        except ValueError:
+            keep_levels = True
     if field == "container_id":
         ensure_container(value)
     elif field == "category":
@@ -564,10 +610,31 @@ def save_cell(part_uuid: str, field: str, value: str = Form("")) -> HTMLResponse
 
 
     with get_conn() as conn:
-        conn.execute(
-            f"UPDATE parts SET {field} = ?, updated_at = datetime('now') WHERE uuid = ?",
-            (value, part_uuid),
-        )
+        if field == "quantity":
+            if keep_levels:
+                current = conn.execute(
+                    "SELECT stock_ok_min, stock_warn_min FROM parts WHERE uuid = ?",
+                    (part_uuid,),
+                ).fetchone()
+                if current is not None:
+                    ok_min = current[0]
+                    warn_min = current[1]
+                else:
+                    ok_min, warn_min = None, None
+
+            conn.execute(
+                """
+                UPDATE parts
+                SET quantity = ?, stock_ok_min = ?, stock_warn_min = ?, updated_at = datetime('now')
+                WHERE uuid = ?
+                """,
+                (q_int, ok_min, warn_min, part_uuid),
+            )
+        else:
+            conn.execute(
+                f"UPDATE parts SET {field} = ?, updated_at = datetime('now') WHERE uuid = ?",
+                (value, part_uuid),
+            )
         row = conn.execute(
             """
             SELECT *,
@@ -604,6 +671,51 @@ def get_row(part_uuid: str) -> HTMLResponse:
         return HTMLResponse("Not found", status_code=404)
 
     return render("_row.html", part=dict(row))
+
+
+@app.post("/parts/{part_uuid}/quantity_delta", response_class=HTMLResponse)
+def quantity_delta(part_uuid: str, delta: int = Form(0)) -> HTMLResponse:
+    try:
+        d = int(delta)
+    except Exception:
+        d = 0
+    # Accept aggregated deltas from the UI (e.g. rapid clicks batched client-side),
+    # but clamp to a reasonable range to prevent accidental huge jumps.
+    if d > 50:
+        d = 50
+    elif d < -50:
+        d = -50
+
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT quantity FROM parts WHERE uuid = ?",
+            (part_uuid,),
+        ).fetchone()
+        if row is None:
+            return HTMLResponse("Not found", status_code=404)
+
+        current_qty = int(row[0] or 0)
+        new_qty = max(current_qty + d, 0)
+        conn.execute(
+            "UPDATE parts SET quantity = ?, updated_at = datetime('now') WHERE uuid = ?",
+            (new_qty, part_uuid),
+        )
+
+        updated = conn.execute(
+            """
+            SELECT *,
+                   datetime(created_at, 'localtime') AS created_at_local,
+                   datetime(updated_at, 'localtime') AS updated_at_local
+            FROM parts
+            WHERE uuid = ?
+            """,
+            (part_uuid,),
+        ).fetchone()
+
+    if updated is None:
+        return HTMLResponse("Not found", status_code=404)
+
+    return render("_row.html", part=dict(updated))
 
 
 @app.get("/restore", response_class=HTMLResponse)
@@ -697,11 +809,11 @@ async def restore_post(
         conn.execute(
             f"""
             INSERT INTO parts(
-                uuid, category, subcategory, description, package, container_id, quantity, notes,
+                uuid, category, subcategory, description, package, container_id, quantity, stock_ok_min, stock_warn_min, notes,
                 image_url, datasheet_url, pinout_url, pinout_image_url, created_at, updated_at
             )
             SELECT
-                uuid, category, subcategory, description, package, container_id, quantity, notes,
+                uuid, category, subcategory, description, package, container_id, quantity, stock_ok_min, stock_warn_min, notes,
                 image_url, datasheet_url, pinout_url, pinout_image_url,
                 COALESCE(created_at, updated_at, datetime('now')),
                 datetime('now')
@@ -731,6 +843,8 @@ def export_csv(q: str = "", category: str = "", container_id: str = "") -> Strea
         "package",
         "container_id",
         "quantity",
+        "stock_ok_min",
+        "stock_warn_min",
         "notes",
         "image_url",
         "datasheet_url",

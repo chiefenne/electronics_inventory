@@ -130,6 +130,22 @@
 </section>
 
 <section class="panel help">
+    <h3>Stock Levels (Optional)</h3>
+    <p>
+        Qty can be color-coded to warn you when stock is getting low.
+        Click the Qty cell to edit quantity and the optional <b>stock levels</b>.
+    </p>
+    <ul>
+        <li>Syntax: <span class="mono">hi:lo</span> (example: <span class="mono">10:5</span>)</li>
+        <li><b>Green</b>: quantity ≥ <span class="mono">hi</span></li>
+        <li><b>Yellow</b>: <span class="mono">lo</span> ≤ quantity &lt; <span class="mono">hi</span></li>
+        <li><b>Red</b>: quantity &lt; <span class="mono">lo</span></li>
+        <li>You can enter a single number like <span class="mono">5</span> to mean <span class="mono">5:5</span>.</li>
+        <li>Leave empty to disable levels (chip stays neutral).</li>
+    </ul>
+</section>
+
+<section class="panel help">
     <h3>Datasheet & Pinout Links</h3>
     <p>
         Each part can store optional URLs to its <b>datasheet</b> and <b>pinout</b> for quick reference.

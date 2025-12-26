@@ -15,8 +15,20 @@ A lightweight web app to track electronics parts (category, subcategory, descrip
 - CSV export
 - Optional links per part: datasheet + pinout (quick-open buttons in the table)
 - Optional images per part: device photo + pinout image (hover preview in the table)
+- Optional stock levels (low-stock warning colors) for quantity
 - Container pages and printable container labels with QR codes
 - Uses a local SQLite database file (no server required)
+
+## Quantity + stock levels
+
+The Qty chip can be color-coded using optional stock levels:
+
+- Enter levels as `hi:lo` (example: `10:5`)
+  - **Green**: quantity $\ge$ `hi`
+  - **Yellow**: `lo` $\le$ quantity $<$ `hi`
+  - **Red**: quantity $<$ `lo`
+- Enter a single number like `5` to use the same value for both (`5:5`).
+- Leave empty to disable levels (chip stays neutral).
 
 ## Screenshots
 

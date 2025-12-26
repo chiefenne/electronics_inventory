@@ -14,6 +14,11 @@
     --text-muted: #64748b;
 
     --danger: #b42318;
+
+    /* Stock status colors (qty chip) */
+    --stock-ok: #15803d;
+    --stock-warn: #ca8a04;
+    --stock-low: var(--danger);
 }
 
 body {
@@ -356,6 +361,12 @@ select:focus {
     color: #334155;
 }
 
+/* Column alignment helpers */
+.tbl th.col-qty,
+.tbl td.col-qty {
+    text-align: center;
+}
+
 .tbl td {
     color: #111;
     overflow-wrap: normal;
@@ -429,6 +440,58 @@ select:focus {
 /* Make chips feel consistent inside tables */
 .tbl td .chip {
     transform: translateY(-1px);
+}
+
+/* =========================
+   Quantity chips (Stock)
+   ========================= */
+
+.qty-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 3.2ch;
+    padding: 3px 10px;
+    border-radius: 999px;
+
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.0);
+    white-space: nowrap;
+    transform: translateY(-1px);
+}
+
+.qty-chip.qty-ok {
+    background: var(--stock-ok);
+}
+
+.qty-chip.qty-warn {
+    background: var(--stock-warn);
+}
+
+.qty-chip.qty-low {
+    background: var(--stock-low);
+}
+
+.qty-chip.qty-none {
+    background: #ffffff;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-soft);
+}
+
+/* Small +/- controls next to the qty chip */
+.btn.icon.qty-step {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 999px;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 750;
 }
 
 /* Chips that are also links (e.g., open container page) */

@@ -30,6 +30,8 @@ def init_db() -> None:
                 package      TEXT,
                 container_id TEXT,
                 quantity     INTEGER NOT NULL DEFAULT 0,
+                stock_ok_min INTEGER,
+                stock_warn_min INTEGER,
                 notes        TEXT,
                 image_url    TEXT,
                 datasheet_url TEXT,
@@ -97,6 +99,8 @@ def init_db() -> None:
                 package      TEXT,
                 container_id TEXT,
                 quantity     INTEGER,
+                stock_ok_min INTEGER,
+                stock_warn_min INTEGER,
                 notes        TEXT,
                 image_url    TEXT,
                 datasheet_url TEXT,
@@ -122,6 +126,8 @@ def init_db() -> None:
             "pinout_url TEXT",
             "pinout_image_url TEXT",
             "created_at TEXT",
+            "stock_ok_min INTEGER",
+            "stock_warn_min INTEGER",
         ):
             col_name = col_def.split()[0]
             if not _has_column("parts", col_name):
@@ -141,6 +147,8 @@ def init_db() -> None:
             "image_url TEXT",
             "pinout_image_url TEXT",
             "created_at TEXT",
+            "stock_ok_min INTEGER",
+            "stock_warn_min INTEGER",
         ):
             col_name = col_def.split()[0]
             if not _has_column("parts_trash", col_name):
